@@ -1,5 +1,4 @@
 # Cài Đặt Linux
----
 
 ## Mục Lục
   - [1. Cài Đặt Trực Tiếp Trên Máy Tính (Dual Boot hoặc Thay Thế Windows)](#1-cài-đặt-trực-tiếp-trên-máy-tính-dual-boot-hoặc-thay-thế-windows)

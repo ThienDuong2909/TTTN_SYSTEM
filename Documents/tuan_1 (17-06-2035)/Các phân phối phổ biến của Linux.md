@@ -1,5 +1,5 @@
 # Các Bản Phân Phối Linux
----
+
 ## Mục Lục
   - [1. Giới Thiệu Về Linux Distribution](#1-giới-thiệu-về-linux-distribution)
   - [2. Các Bản Phân Phối Phổ Biến](#2-các-bản-phân-phối-phổ-biến)

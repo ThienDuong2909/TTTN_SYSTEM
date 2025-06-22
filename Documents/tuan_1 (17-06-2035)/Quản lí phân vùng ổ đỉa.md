@@ -1,5 +1,5 @@
 # Quản Lý Phân Vùng Ổ Đĩa Trên Linux
----
+
 ## Mục Lục
 - [1. Giới Thiệu](#1-giới-thiệu)
 - [2. Các Khái Niệm Cơ Bản](#2-các-khái-niệm-cơ-bản)
@@ -241,8 +241,8 @@
 
 ![Physical Volume Details](/Images/pvdisplay.png)
 
-**Bước 3: Tạo Volume Group**  
-- Tạo **Volume Group** với tên `vg0` bằng cách sử dụng `/dev/sdb1` và `/dev/sdc1`:  
+- **Tạo Volume Group**  
+  - Tạo Volume Group với tên `vg0` bằng cách sử dụng `/dev/sdb1` và `/dev/sdc1`:  
   ```bash
   vgcreate vg0 /dev/sdb1 /dev/sdc1
   ```
@@ -288,7 +288,7 @@
 | `#SN`    | Số lượng **Snapshot** của **Volume Group**.                     |
 | `Attr`   | Trạng thái (**writable**, **readable**, **resizable**, ...).    |
 
-**Bước 4: Tạo Logical Volume**  
+**Bước 3: Tạo Logical Volume**  
 - Tạo hai **Logical Volume**:  
   - `projects` với dung lượng **500MB**.  
   - `backups` sử dụng toàn bộ dung lượng còn lại của **Volume Group**.  
