@@ -1,4 +1,4 @@
-# Hướng Dẫn Quản Lý và Cấu Hình Mạng Trong Linux
+# Mạng Trong Linux
 
 ## Mục Lục
 - [1. Kiểm Tra và Cấu Hình Địa Chỉ Mạng Với `ifconfig`](#1-kiểm-tra-và-cấu-hình-địa-chỉ-mạng-với-ifconfig)
@@ -135,6 +135,9 @@ netstat [tùy chọn]
 ```bash
 netstat -tulnp
 ```
+![netstat result](/Images/netstat.png) 
+
+
 Lệnh trên hiển thị các cổng TCP/UDP đang lắng nghe cùng với PID.
 
 **Lưu ý**: `netstat` thuộc gói `net-tools`, có thể cần cài đặt:
@@ -165,6 +168,7 @@ ss [tùy chọn]
 ```bash
 ss -tulnp
 ```
+![ss -tulnp](/Images/ss.png) 
 
 ---
 
@@ -188,14 +192,24 @@ sudo tcpdump [tùy chọn]
 | `host <IP>`         | Lọc gói tin theo địa chỉ IP.                                |
 
 **Ví dụ**:
-- Bắt 10 gói tin trên giao diện `eth0`:
+- Bắt 10 gói tin trên giao diện `enp0s3`:
   ```bash
-  sudo tcpdump -i eth0 -c 10
+  sudo tcpdump -i enp0s3 -c 10
   ```
-- Lưu gói tin từ cổng 80 vào tệp `capture.pcap`:
+  ![IP config result](/Images/tcpdump.png) 
+
+- Lưu các gói tin đầu ra từ lệnh `tcpdump` vào tệp `capture.pcap`:
   ```bash
-  sudo tcpdump -i eth0 port 80 -w capture.pcap
+  sudo tcpdump -w capture.pcap
   ```
+
+  - Để đọc file `.pcap`, bạn có thể sử dụng `tcpdump` với tham số `-r`:
+  ```bash
+  sudo tcpdump -r capture.pcap
+  ```
+
+  ![tcpdump -r result](/Images/tcpdump-r.png) 
+
 
 **Lưu ý**: Cần cài đặt `tcpdump` và quyền quản trị:
 ```bash
@@ -206,33 +220,54 @@ sudo apt install tcpdump
 
 ## 4. Lab: Cấu Hình IP Tĩnh Trên Máy Ảo (Debian/Ubuntu)
 
-**Mục đích**: Cấu hình địa chỉ IP tĩnh cho một giao diện mạng trên máy ảo.
+**Mục đích**: Cấu hình địa chỉ IP tĩnh cho một interface mạng trên máy ảo.
 
 **Các bước thực hiện**:
 
-**Bước 1: Kiểm tra giao diện mạng**:
+**Bước 1: Kiểm tra các interface hiện có**:
 ```bash
 ip link show
 ```
-Giả sử giao diện là `eth0`.
+![link show result](/Images/link-show.png) 
+
+Hiện tại có `enp0s3`.
 
 **Bước 2: Chỉnh sửa tệp cấu hình mạng**:
 - Trên Debian/Ubuntu (sử dụng `netplan`):
   ```bash
-  sudo nano /etc/netplan/01-netcfg.yaml
+  sudo nano /etc/netplan/01-network-manager-all.yaml
   ```
   Thêm nội dung sau:
   ```yaml
   network:
     version: 2
     ethernets:
-      eth0:
+      enp0s3:
+        dhcp4: true
         addresses:
-          - 192.168.1.100/24
-        gateway4: 192.168.1.1
+          - 192.168.2.100/24
+        routes: 
+          - to: 0.0.0.0/0
+            via: 192.168.2.1
+            metric: 100
         nameservers:
-          addresses: [8.8.8.8, 8.8.4.4]
+          addresses: 
+          - 8.8.8.8
   ```
+
+| Thuộc tính                | Giá trị ví dụ                | Giải thích                                                                 |
+|---------------------------|------------------------------|---------------------------------------------------------------------------|
+| `network`                 | -                            | Phần chính xác định cấu hình mạng.                                        |
+| `version`                 | `2`                          | Phiên bản cú pháp của Netplan (phiên bản 2 là phổ biến).                   |
+| `ethernets`               | -                            | Loại giao diện mạng được cấu hình (ở đây là giao diện Ethernet).           |
+| `enp0s3`                  | -                            | Tên giao diện mạng (thay đổi tùy hệ thống, ví dụ: `eth0`, `enp0s3`, ...).  |
+| `dhcp4`                   | `true`                       | Kích hoạt DHCP cho IPv4 để tự động nhận địa chỉ IP từ router (nếu cần).    |
+| `addresses`               | `- 192.168.2.100/24`        | Địa chỉ IP tĩnh được gán cho giao diện (`192.168.2.100` với subnet mask `/24`). |
+| `routes`                  | -                            | Định nghĩa các tuyến đường (route) để kết nối mạng.                       |
+| `to`                      | `0.0.0.0/0`                 | Tuyến đường mặc định (default route) cho tất cả lưu lượng mạng.            |
+| `via`                     | `192.168.2.1`               | Địa chỉ IP của gateway (router) để gửi lưu lượng mạng ra ngoài.            |
+| `nameservers`             | -                            | Cấu hình máy chủ DNS để phân giải tên miền.                               |
+| `addresses` (nameservers) | `- 8.8.8.8`                 | Địa chỉ IP của máy chủ DNS (ở đây sử dụng DNS công cộng của Google).       
 
 **Bước 3: Áp dụng cấu hình**:
 ```bash
@@ -244,6 +279,8 @@ sudo netplan apply
 ip addr show eth0
 ping 8.8.8.8
 ```
+![IP config result](/Images/ip-addr-show-ping.png) 
+
 
 **Lưu ý**:
 - Tệp cấu hình có thể khác nhau tùy bản phân phối (ví dụ: `/etc/network/interfaces` trên Debian cũ).
@@ -272,9 +309,9 @@ net.ipv4.ip_forward=1
 ```bash
 sudo iptables -t nat -A POSTROUTING -o <interface_ra> -j MASQUERADE
 ```
-Ví dụ: Nếu giao diện ra là `eth0`:
+Ví dụ: Nếu giao diện ra là `enp0s3`:
 ```bash
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
 ```
 
 **Bước 3: Kiểm tra quy tắc**:
@@ -282,7 +319,8 @@ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -t nat -L -v
 ```
 
-**Ví dụ ứng dụng**: Máy chủ Linux (có 2 giao diện: `eth0` nối Internet, `eth1` nối mạng nội bộ `192.168.1.0/24`) chuyển tiếp lưu lượng từ mạng nội bộ ra Internet.
+![IP table result](/Images/iptable-t-nat.png) 
+
 
 **Lưu ý**: Cần cài đặt `iptables` và quyền quản trị. Trên các hệ thống mới, `nftables` có thể thay thế `iptables`.
 
@@ -316,6 +354,8 @@ search <tên_miền>
 ```bash
 nslookup google.com
 ```
+![IP table result](/Images/nslookup-gg.png) 
+
 
 **Lưu ý**:
 - `/etc/resolv.conf` có thể bị ghi đè bởi các dịch vụ như `systemd-resolved` hoặc `NetworkManager`.
