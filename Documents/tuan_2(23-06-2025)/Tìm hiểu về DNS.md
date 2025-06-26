@@ -1,4 +1,4 @@
-# Tìm Hiểu và Cấu Hình DNS Trên Linux
+# Tìm hiểu về DNS
 ## Mục Lục
 - [1. Giới Thiệu về DNS](#1-giới-thiệu-về-dns)
 - [2. Các Loại Bản Ghi DNS](#2-các-loại-bản-ghi-dns)
