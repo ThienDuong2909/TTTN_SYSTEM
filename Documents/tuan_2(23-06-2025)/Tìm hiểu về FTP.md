@@ -1,23 +1,23 @@
 # Tìm hiểu về FTP 
 
 ## Mục lục
-1. [Giới thiệu](#giới-thiệu)
-2. [Phân loại FTP Server](#phân-loại-ftp-server)
+- [1. Giới thiệu về FTP](#1-giới-thiệu-về-ftp)
+- [2. Phân loại FTP Server](#2-phân-loại-ftp-server)
    - [FTP (File Transfer Protocol)](#ftp-file-transfer-protocol)
    - [FTPS - FTP Secure](#ftps---ftp-secure)
    - [SSH File Transfer Protocol - SFTP](#ssh-file-transfer-protocol---sftp)
    - [So sánh giữa SFTP vs FTP](#so-sánh-giữa-sftp-vs-ftp)
    - [So sánh giữa SFTP vs FTPS](#so-sánh-giữa-sftp-vs-ftps)
-3. [Cài đặt, cấu hình FTP và kiểm tra với lệnh ftp](#cài-đặt-cấu-hình-ftp-và-kiểm-tra-với-lệnh-ftp)
-4. [Mã hóa kết nối với SSL/TLS](#mã-hóa-kết-nối-với-ssltls)
-5. [Cài đặt, cấu hình SFTP và kiểm tra với lệnh sftp](#cài-đặt-cấu-hình-sftp-và-kiểm-tra-với-lệnh-sftp)
-6. [Thực hành sử dụng FileZilla](#thực-hành-sử-dụng-filezilla)
+- [3. Cài đặt, cấu hình FTP và kiểm tra với lệnh ftp](#3-cài-đặt-cấu-hình-ftp-và-kiểm-tra-với-lệnh-ftp)
+- [4. Mã hóa kết nối với SSL/TLS](#4-mã-hóa-kết-nối-với-ssl-tls)
+- [5. Cài đặt, cấu hình SFTP và kiểm tra với lệnh sftp](#5-cài-đặt-cấu-hình-sftp-và-kiểm-tra-với-lệnh-sftp)
+- [6. Thực hành sử dụng FileZilla](#6-thực-hành-sử-dụng-filezilla)
    - [Kiểm tra kết nối với FTPS](#kiểm-tra-kết-nối-với-ftps)
    - [Kiểm tra kết nối với SFTP](#kiểm-tra-kết-nối-với-sftp)
 
 ---
 
-### Giới thiệu
+## 1. Giới thiệu về FTP
 
 FTP (File Transfer Protocol) là một giao thức trong mô hình TCP/IP được dùng để truyền các file giữa các máy. FTP cho phép truyền nhận file và quản lý trực tuyến. FTP không cho phép truy xuất một máy khác để thực thi chương trình, nhưng nó rất tiện lợi cho việc thao tác với file.
 
@@ -25,7 +25,7 @@ FTP Server (File Transfer Protocol Server) là một loại phần mềm hoặc 
 
 ---
 
-### Phân loại FTP Server
+## 2. Phân loại FTP Server
 
 ### **FTP (File Transfer Protocol)**
 
@@ -70,7 +70,7 @@ Cả SFTP và FTPS đều là các giao thức truyền file an toàn, nhưng ch
 
 ---
 
-### Cài đặt, cấu hình FTP và kiểm tra với lệnh ftp
+## 3. Cài đặt, cấu hình FTP và kiểm tra với lệnh ftp
 
 Bước 1:  cập nhật danh sách nguồn gói hệ thống rồi cài đặt gói **VSFTPD** như sau:
 
@@ -208,8 +208,7 @@ Cuối cùng đóng kết nối:
 ![image.png](/Images/tuan_2/image%2011.png)
 
 ---
-
-### **Mã hoá kết nối với SSL/TLS**
+## 4. Mã hóa kết nối với SSL/TLS
 
 Để có thể mã hoá kết nối FTP, bạn cần phải có một chứng chỉ SSL và cấu hình vsftpd sử dụng nó. Ở đây mình sẽ sử dụng openssl để tạo chứng chỉ như sau:
 
@@ -262,7 +261,7 @@ sudo systemctl restart vsftpd
 ```
 ---
 
-### Cài đặt, cấu hình SFTP và kiểm tra với lệnh sftp
+## 5. Cài đặt, cấu hình SFTP và kiểm tra với lệnh sftp
 
 Để đảm bảo rằng các gói OpenSSH đã được cài đặt trên hệ thống Linux của bạn, hãy sử dụng lệnh sau. Đối với máy chủ Debian hoặc Ubuntu, bạn có thể sử dụng lệnh dpkg bên dưới.
 
@@ -436,7 +435,7 @@ Tới đây ta đã hoàn thành cấu hình và kiểm tra SFTP server sau khi 
 
 ---
 
-### Thực hành sử dụng FileZilla
+## 6. Thực hành sử dụng FileZilla
 
 - **Kiểm tra kết nối với FTPS**
     
