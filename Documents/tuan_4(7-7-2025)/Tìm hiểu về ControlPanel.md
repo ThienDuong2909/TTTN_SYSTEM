@@ -11,6 +11,16 @@
     - [Nhược điểm](#nhược-điểm)
     - [Cài đặt CyberPanel](#cài-đặt-cyberpanel)
     - [Thao tác với CyberPanel](#thao-tác-với-cyberpanel)
+  - [aaPanel](#aapanel)
+    - [Giới thiệu về aaPanel](#giới-thiệu-về-aapanel)
+    - [Ưu điểm](#ưu-điểm-của-aapanel)
+    - [Nhược điểm](#nhược-điểm-của-aapanel)
+    - [Cài đặt aaPanel](#cài-đặt-aapanel)
+    - [Thao tác với aaPanel](#thao-tác-với-aapanel)
+  - [FastPanel](#fastpanel)
+    - [Giới thiệu về FastPanel](#giới-thiệu-về-fastpanel)
+    - [Cài đặt FastPanel](#cài-đặt-fastpanel)
+    - [Thao tác với FastPanel](#thao-tác-với-fastpanel)
 ## cPanel
 
 ### Giới thiệu về cPanel
@@ -507,3 +517,585 @@ Vào lại **Websites  → List Websites ,** xem đã thấy website đã restor
 Ngoài ra cũng có các chức năng như xóa , xem danh sách, và truy cập trang quản lý của PHPMYAdmin
 
 ![image.png](/Images/tuan_4_controlpanel/image%2073.png)
+
+
+# aaPanel
+
+### Giới thiệu về aaPanel
+
+**aaPanel** là một bảng điều khiển hosting (control panel) mã nguồn mở, miễn phí, được thiết kế để giúp người dùng quản lý máy chủ web một cách dễ dàng và hiệu quả hơn. Nó cung cấp một giao diện đồ họa thân thiện, giúp bạn thực hiện các tác vụ quản lý máy chủ mà không cần phải sử dụng các lệnh phức tạp.
+
+![image.png](/Images/tuan_4_controlpanel/image%2074.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%2075.png)
+
+### **Ưu điểm của aaPanel**
+
+- **Miễn phí và mã nguồn mở:** Đây là ưu điểm lớn nhất của aaPanel, cho phép bạn sử dụng và tùy chỉnh hoàn toàn miễn phí.
+- **Giao diện trực quan, dễ sử dụng:** Giao diện được thiết kế đơn giản, thân thiện với người dùng, ngay cả những người mới bắt đầu cũng có thể dễ dàng làm quen.
+- **Tính năng đa dạng:** aaPanel hỗ trợ quản lý nhiều dịch vụ như web server, database, FTP, email, DNS, … giúp bạn quản lý toàn bộ máy chủ một cách tập trung.
+- **Cài đặt ứng dụng một click:** Dễ dàng cài đặt các CMS phổ biến như WordPress, Joomla, Laravel,…
+- **Cộng đồng lớn:** Có một cộng đồng người dùng đông đảo, sẵn sàng hỗ trợ khi bạn gặp khó khăn.
+- **Tùy biến cao:** Bạn có thể tùy chỉnh nhiều cấu hình để phù hợp với nhu cầu của mình.
+- **Hiệu năng tốt:** aaPanel hoạt động khá mượt mà trên các VPS có cấu hình thấp.
+
+### **Nhược điểm của aaPanel**
+
+- **Cộng đồng còn khá mới:** So với các control panel khác như cPanel, cộng đồng của aaPanel còn tương đối mới, do đó tài liệu và hỗ trợ có thể chưa đầy đủ.
+- **Tính năng chưa đa dạng bằng các sản phẩm thương mại:** Một số tính năng nâng cao có thể chưa được tích hợp sẵn trong aaPanel, bạn cần phải cài đặt thêm các plugin hoặc module.
+- **Bảo mật:** Mặc dù có các tính năng bảo mật cơ bản, nhưng bạn cần tự mình cấu hình và cập nhật các bản vá để đảm bảo an toàn cho máy chủ.
+- **Tài liệu tiếng Việt còn hạn chế:** Phần lớn tài liệu hướng dẫn của aaPanel được viết bằng tiếng Anh, có thể gây khó khăn cho người dùng không thành thạo ngoại ngữ.
+
+### Cài đặt aaPanel
+
+**Bước 1: Cập nhập các gọi** 
+
+```bash
+sudo apt update && sudo apt upgrade
+```
+
+**Bước 2. Tải xuống script install aaPanel**
+
+Tải xuống script cài đặt aaPanel trước với lệnh sau:
+
+```
+wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh
+```
+
+Sau khi script được tải xuống, thực thi với lệnh dưới đây:
+
+```
+chmod +x install.sh
+```
+
+**Bước 3. Bắt đầu quá trình install aaPanel Ubuntu 22.04**
+
+Để bắt đầu quá trình install aaPanel, thực hiện các bước sau:
+
+```
+bash install.sh
+```
+
+Sau khi thực hiện lệnh này, bạn sẽ được hỏi liệu bạn muốn cài đặt aaPanel vào **/var/www/** hay không. Nhập "`y`", nhấn Enter và đợi một chút để hoàn tất quá trình cài đặt.
+
+![image.png](/Images/tuan_4_controlpanel/image%2076.png)
+
+Sau khi cài đặt thành công, bạn sẽ nhận được thông báo sau
+
+![image.png](/Images/tuan_4_controlpanel/image%2077.png)
+
+Ta sẽ nhận được địa chỉ truy cập , username và password để đăng nhập vào trang quản lý aaPanel
+
+Cuối cùng ta truy cập vào đường dẫn mà aaPanel cung cấp và đăng nhập vào trang quản lý chính của aaPanel
+
+![image.png](/Images/tuan_4_controlpanel/image%2078.png)
+
+Nhập tài khản mật khẩu được cấp để vào giao diện quản lý
+
+![image.png](/Images/tuan_4_controlpanel/image%2079.png)
+
+### Thao tác với aaPanel
+
+**1. Thao tác với domain và sub - domain**
+
+Ở mục **Websites** → nhấn vào **Add site**
+
+![image.png](/Images/tuan_4_controlpanel/image%2080.png)
+
+Tại giao diện bên dưới, bạn thực hiện thêm vào domain mới nhé. Mình sẽ chú thích một vài thông số quan trọng để bạn nắm.
+
+- **Domain**: Tên miền website bạn cần sử dụng, bạn nên thêm cả www và non-www (mỗi tên miền là một dòng khác nhau).
+- **Description**: Mô tả của website, mặc định nó ghi tên miền website vào và bạn có thể sửa lại.
+- **Root directory**: Thư mục gốc của website này trên máy chủ, bạn nên để nguyên.
+- **FTP**: Nếu bạn muốn tạo một tài khoản riêng FPT cho website này thì chọn Create.
+- **Database**: Nếu bạn muốn tạo một database riêng cho website này thì chọn Create, hoặc có thể tạo sau.
+- **PHP Version**: Phiên bản PHP dành cho website, bạn có thể cài thêm phiên bản PHP tại mục App Store trong AAPanel.
+
+![image.png](/Images/tuan_4_controlpanel/image%2081.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%2082.png)
+
+Sau khi nhập đầy đủ thông tin cần thiết thì nhấn **Confirm, chờ 1 lát bạn sẽ nhận được thông báo tạo thành công nếu không xẩy ra lỗi gì**
+
+![image.png](/Images/tuan_4_controlpanel/image%2083.png)
+
+Để thêm nhiều tên miền mới cho cùng 1 site thì Nhấn vào **dấu 3 chấm** của site đó → **Security Scan** → chọn tab **Domain Manager** → nhập **Domain mới** → nhấn **Add**
+
+![image.png](/Images/tuan_4_controlpanel/image%2084.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%2085.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%2086.png)
+
+**2. Thao tác với FTP Account**
+
+Nhấn vào mục FTP, ta sẽ vào giao diện quản lý những thao tác liên quan đến FTP 
+
+![image.png](/Images/tuan_4_controlpanel/image%2087.png)
+
+Để thêm 1 tài khoản FTP thì ở giao diện này → nhấn **Add FTP**
+
+![image.png](/Images/tuan_4_controlpanel/image%2088.png)
+
+Nhập username, password và chọn Document root cho tài khoản FTP mới đó → xong nhấn **Confirm**
+
+Chờ 1 lát để tạo tài khoản, xong sẽ hiển thị thông tin tài khoản vừa tạo ở trang quản lý FTP
+
+![image.png](/Images/tuan_4_controlpanel/image%2089.png)
+
+**3. Thao tác cài chứng chỉ SSL**
+
+**Đối với chứng chỉ miễn phí (Let’s Encrypt)**
+
+Để cài chứng chỉ SSL miễn phí cho một website nào đó trên AAPanel, bạn vào **AAPanel => Website => Conf** trên website mà bạn cần cài đặt.
+
+![image.png](/Images/tuan_4_controlpanel/image%2090.png)
+
+Chọn tab **SSL** → **Let’s Encrypt** → chọn **File Verification** → tích vào những **domain** muốn cài chứng chỉ → nhấn **Apply** 
+
+![image.png](/Images/tuan_4_controlpanel/image%2091.png)
+
+Chờ 1 lát để cài chứng chỉ 
+
+![image.png](/Images/tuan_4_controlpanel/image%2092.png)
+
+**Đối với chứng chỉ trả phí(EV, OV, …)**
+
+Cũng ở mục SSL trong **Conf** → nhấn tab **Current Cert** (Other certificate) → dán nội dung của 2 file .key và .crt mà bạn có lúc đã mua chứng chỉ → nhấn **Save and enable SSL** 
+
+![image.png](/Images/tuan_4_controlpanel/image%2093.png)
+
+**4. Thao tác Backup và Restore dữ liệu**
+
+**Backup dữ liệu**
+
+*Backup dữ liệu cách thủ công*
+
+**Đối với dữ liệu website**
+
+Ở mục Website → theo cột Backup, nhân vào chữ (Today) hoặc số (2)
+
+![image.png](/Images/tuan_4_controlpanel/image%2094.png)
+
+Nhấn vào nút **Backup →** hiện thông báo backup thành công → kiểm tra bảng bên dưới xem có bản backup mới chưa
+
+![image.png](/Images/tuan_4_controlpanel/image%2095.png)
+
+**Đối với dữ liệu Database**
+
+Ở mục **Databases → theo cột Backup, nhấn vào tương ứng database muốn backup** 
+
+![image.png](/Images/tuan_4_controlpanel/image%2096.png)
+
+Nhấn **Backup** → xem lại bảng dữ liệu **Backup** bên dưới
+
+![image.png](/Images/tuan_4_controlpanel/image%2097.png)
+
+*Backup dữ liệu tự động*
+
+Ở mục **Cron** → **Add Task**
+
+Tại mục “Task type”, bạn có thể tùy chọn các thao tác backup như:
+
+***Backup Site:** sao lưu trang web muốn hoặc cũng có thể tùy chọn sao lưu tất cả các trang web hiện đang được quản lý trên aaPanel.*
+
+***Backup Database:** sao lưu cơ sở dữ liệu của 1 trang web, bạn cũng có thể sao lưu tất cả các cơ sở dữ liệu.*
+
+***Backup Directory:** sao lưu một file/thư mục cụ thể.*
+
+![image.png](/Images/tuan_4_controlpanel/image%2098.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%2099.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20100.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20101.png)
+
+*Trong đó:*
+
+- **Execution cycle**: bạn có thể tùy chọn set thời gian cụ thể thực hiện backup tự động theo tuần, ngày giờ backup.
+- **Backup to:** Chọn nơi lưu trữ file backup, bạn có thể cài đặt các plugin lưu trữ như: Google Cloud, AWS S3, dung lượng lưu trữ FTP, Google Drive hoặc có thể lưu file backup trên ổ đĩa máy chủ hiện tại (Disk of server). Nếu lưu vào ổ đĩa máy chủ thì đường dẫn mặc định là: /www/backup/”database_or_site”
+- **Retain the latest:** số lượng bản sao lưu dự trữ. Hệ thống mặc định là 3, bạn có thể thay đổi theo nhu cầu của mình.
+- **Backup reminder:** Set thông báo khi hệ thống thực hiện backup thành công.
+- Nhấp vào nút "**Add Task**" ****để hoàn thành.
+
+**Lưu ý:** Bạn nên kiểm tra xem tác vụ sao lưu tự động đã hoàn tất chưa. Việc không đủ dung lượng ổ đĩa, lỗi mật khẩu cơ sở dữ liệu hoặc mạng không ổn định…sẽ dễ dẫn đến việc sao lưu không đầy đủ các tệp.
+
+**Restore dữ liệu**
+
+Ở phần Website → giống theo cột Backup, nhấn vào website cần **Restore** 
+
+![image.png](/Images/tuan_4_controlpanel/image%20102.png)
+
+Dưới phần bảng hiễn thị những file backup trước đó → nhấn **Restore** ở file backup muốn restore dữ liệu về 
+
+![image.png](/Images/tuan_4_controlpanel/image%20103.png)
+
+Chờ 1 lát để tiến hành restore dữ liệu Database, sau khi xữ lý xong sẽ hiện thông báo thành công
+
+![image.png](/Images/tuan_4_controlpanel/image%20104.png)
+
+# FastPanel
+
+### Giới thiệu về FastPanel
+
+**FastPanel** là ****phần mềm quản trị máy chủ miễn phí được thiết kế để đơn giản hóa việc quản lý hosting. Tương tự như các công cụ nổi tiếng như cPanel hay DirectAdmin, FastPanel nổi bật với giao diện thân thiện và cấu trúc tinh gọn, giúp người dùng dễ dàng thao tác ngay cả khi không có nhiều kinh nghiệm kỹ thuật. Đây là giải pháp lý tưởng cho quản trị viên hệ thống và chủ website muốn tiết kiệm chi phí nhưng vẫn đảm bảo hiệu suất cao.
+
+### Cài đặt FastPanel
+
+**Bước 1: Cập nhật các gói phần mềm**
+
+```bash
+sudo apt update && sudo apt upgrade
+```
+
+**Bước 2: Cài đặt các gói cần thiết**
+
+```bash
+sudo apt install -y wget curl
+```
+
+**Bước 3: Tải xuống và cài đặt Trình cài đặt FastPanel**
+
+```bash
+wget http://repo.fastpanel.direct/install_fastpanel.sh -O - | sudo bash
+```
+
+Chờ 1 khoảng thời gian, kết quả sẽ la:
+
+![image.png](/Images/tuan_4_controlpanel/image%20105.png)
+
+**Chú ý:** sẽ có tài khoản và mật khẩu để đăng nhập vào trình quản lý của FastPanel, bạn nên ghi chú lại.
+
+Bước 4: Kiểm tra hoạt động của FastPanel
+
+Sau khi cài đặt hoàn tất, bạn có thể truy cập FastPanel thông qua trình duyệt web của mình. URL mặc định là:
+
+```
+http://your_server_ip:8888
+```
+
+Sau đó nhập email để xác nhận, bạn sẽ nhận được mail có gắn link xác nhận chỉ cần nhấn vào link đó là bạn đã xác nhận thành công.
+
+![image.png](/Images/tuan_4_controlpanel/image%20106.png)
+
+Trở về URL mặc định [`http://your_server_ip:8888`](http://your_server_ip:8888) bạn sẽ vào được trang **License Agreement → nhấn Accept**
+
+![image.png](/Images/tuan_4_controlpanel/image%20107.png)
+
+Cuối cùng sẽ vào được giao diện quản lý của FastPanel
+
+![image.png](/Images/tuan_4_controlpanel/image%20108.png)
+
+### Thao tác với FastPanel
+
+**1. Thao tác với domain và sub - domain**
+
+Ở trang chủ của FastPanel → nhấn nút Create site
+
+![image.png](/Images/tuan_4_controlpanel/image%20109.png)
+
+Lúc này sẽ có 2 tuỳ chọn gồm:.
+
+- **Create a CMS based site**: Thêm tên miền và cài sẵn WordPress.
+- **Create a site manually**: Chỉ thêm tên miền (domain).
+
+Trong nội dung bài hướng dẫn này là thêm tên miền vào FastPanel nên mình sẽ nhấn **Create a site manually** (Chỉ thêm tên miền).
+
+![image.png](/Images/tuan_4_controlpanel/image%20110.png)
+
+Đến đây, bạn điền tên miền cần thêm ở mục **Which domain to bind?** và bấm **Next step.**
+
+![image.png](/Images/tuan_4_controlpanel/image%20111.png)
+
+FastPanel cũng sẽ tự động tạo ra các thông tin liên quan cho bạn gồm:
+
+- **User**: Mỗi tên miền sẽ có 1 user riêng giúp tăng cường bảo mật.
+- **PHP**: Lựa chọn phiên bản PHP phù hợp với website.
+- **Database**: FastPanel cung cấp 1 Database gồm nhiều ký tự tương ứng cho website
+- **Backup copies**: Sao lưu dữ liệu trên FastPanel
+- **FPT account**: Tài khoản sử dụng để kết nối FTP
+
+Sau khi kiểm tra các thông tin trên, bạn nhấn **Create site**.
+
+![image.png](/Images/tuan_4_controlpanel/image%20112.png)
+
+Sau đó bạn sẽ nhận thông báo thêm tên miền (domain) vào FastPanel thành công như hình minh họa dưới đây. 
+
+![image.png](/Images/tuan_4_controlpanel/image%20113.png)
+
+Để tạo **sub - domain cho website thì tại trang chủ - chọn website muốn thêm domain →  Site card**
+
+![image.png](/Images/tuan_4_controlpanel/image%20114.png)
+
+Trong **Site managing** → chọn **Subdomains** → vào được giao diện quản lý subdomains rồi → chọn **Create**
+
+![image.png](/Images/tuan_4_controlpanel/image%20115.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20116.png)
+
+Nhập **sub - domain** → chọn thư mục chứa **Subdirectory →** nhấn **Save**
+
+![image.png](/Images/tuan_4_controlpanel/image%20117.png)
+
+Chờ 1 lát để tạo mới, kết quả sẽ là 
+
+![image.png](/Images/tuan_4_controlpanel/image%20118.png)
+
+**2. Thao tác tạo FTP Account**
+
+Mở **sidebar** → Chọn **Management** → tìm **FTP account** và chọn → nhập đầy đủ thông tin → nhấn **Save**
+
+![image.png](/Images/tuan_4_controlpanel/image%20119.png)
+
+Trong đó:
+
+- **Login:** Bạn sẽ cần nhập username sẽ sử dụng. Không được viết dấu và không được có khoảng trắng.
+- **Password:** Bạn cần nhập mật khẩu tối thiểu 8 ký tự, có ít nhất một chữ viết hoa, một chữ viết thường và một ký tự đặc biệt. Ví dụ một mật khẩu hợp lệ sẽ là: Azd!giNo1. Hoặc đơn giản hơn chúng ta có thể chọn nút **generate** để FASPANEL tự tạo mật khẩu.
+- **Owner:** Tài khoản FPT sắp tạo sẽ được quản lý/sở hữu bởi người dùng nào, nếu bạn cần tạo cho bạn sử dụng thì có thể bỏ qua phần này.
+- **Site:** Nếu bạn cần tạo tài khoản FTP này cho website nào thì hãy chọn một website ở ô này.
+- **Home directory:** Tại đây bạn sẽ cấp quyền nơi tài khoản FTP này có thể truy cập đến. Còn nếu bạn đã chọn một website ở Site thì có thể bỏ qua mục này.
+- **Permissions:** Tại đây sẽ có hai tùy chọn **Allow all**(Cho phép tất cả các quyền) hoặc **Read only**(Chỉ cho xem mà không được xóa hay chỉnh sửa gì cả) tùy theo nhu cầu của bạn mà bạn chọn, tuy nhiên hầu hết chúng ta sẽ cần **Allow All**.
+
+**3. Thao tác cài chứng chỉ SSL**
+
+**Đối với chứng chỉ miễn phí (Let’s Encrypt)**
+
+Mở **Sidebar** → chọn **SSL certificates** → nhấn **New certificate**
+
+Chọn mục **Let’s Encrypt** → chọn **Site** cần cài SSL → chọn **Key length** 
+
+**Lưu ý:** Key length càng dài sẽ càng bảo mật cao, nhưng thời gian xác thực sẽ dài hơn →Nhập email xác thực và Save
+
+![image.png](/Images/tuan_4_controlpanel/image%20120.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20121.png)
+
+**Đối với chứng chỉ trả phí (EV, OV, …)**
+
+Chọn **New certificate** → **Existing**
+
+Ta mở các file mà nhà cung cúng SSL đã gửi sau đó dán các phần cần thiết vào:
+
+- File .key – Private Key
+- File .crt - Certificate
+- Đối với Chain sẽ có hoặc không tùy theo nhà cung cấp SSL
+
+![image.png](/Images/tuan_4_controlpanel/image%20122.png)
+
+Sau đó chờ để xác thực và hoàn thành cài chứng chỉ
+
+**4. Backup và Restore dữ liệu**
+
+Mở **Sidebar** → chọn **Management** → chọn **Backup copies →** trong tap **Accounts** nhấn nút **New account**
+
+![image.png](/Images/tuan_4_controlpanel/image%20123.png)
+
+Có nhiều tùy chọn để lưu trữ các file backup, ta sẽ bắt đầu với ví dụ local trước. Nhập thông tin → **Save**
+
+![image.png](/Images/tuan_4_controlpanel/image%20124.png)
+
+Sau khi hoàn tất tạo tài khoản backup, ta sẽ di chuyển quan tab **Plans** → Chọn **New plan**
+
+![image.png](/Images/tuan_4_controlpanel/image%20125.png)
+
+Ta tiến hành cấu hình với các thông số cần lưu ý như sau:
+
+- **Account:** tài khoản backup đã tạo ở trên
+- **Backup copies limit:** Số lượng backup lưu trữ
+- **Sites**: Website cần backup
+- **Databases:** Database cần backup
+- **Start time:** Thời điểm chạy backup, chọn template cấu hình sẵn hoặc có thể tự tinh chỉnh
+
+![image.png](/Images/tuan_4_controlpanel/image%20126.png)
+
+Hoàn tất, có thể bấm Run now để kiểm tra khả năng backup
+
+![image.png](/Images/tuan_4_controlpanel/image%20127.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20128.png)
+
+Thành quả 
+
+![image.png](/Images/tuan_4_controlpanel/image%20129.png)
+
+Để Restore dữ liệu từ bản backup thì đầu tiên, truy cập danh sách các bản copy hiện có
+
+![image.png](/Images/tuan_4_controlpanel/image%20130.png)
+
+Chọn vào bản copy muốn restore
+
+![image.png](/Images/tuan_4_controlpanel/image%20131.png)
+
+Xác nhận (lưu ý và kiểm tra kỹ lưỡng trước khi thực hiện)
+
+![image.png](/Images/tuan_4_controlpanel/image%20132.png)
+
+Thông báo Restore thành công
+
+![image.png](/Images/tuan_4_controlpanel/image%20133.png)
+
+**5. Thao tác quản lý Database**
+
+**Tạo Database mới**
+
+Mở Sidebar → chọn Management → chọn Databases
+
+![image.png](/Images/tuan_4_controlpanel/image%20134.png)
+
+Chọn New database để tiến hành tạo database
+
+![image.png](/Images/tuan_4_controlpanel/image%20135.png)
+
+Ta sẽ điền các thông tin liên quan gồm:
+
+- **Name:** Tên Database
+- **Character Set:** Bộ ký tự (nên để mặc định)
+- **Owner:** User sở hữu database (hay còn gọi là user database, có thể thay đổi sau)
+- **Website:** Website cần gán database
+- **User:** Lựa chọn tạo mới
+- **Login:** Database user
+- **Password:** Mật khẩu của Database user
+- **Confirm the password:** Xác nhận lại mật khẩu
+
+![image.png](/Images/tuan_4_controlpanel/image%20136.png)
+
+**Import/Export bằng giao diện phpMyAdmin**
+
+Chọn Open phpMyAdmin hoặc nút mũi tên chéo để mở thẳng trang quản lý cho database chỉ định
+
+![image.png](/Images/tuan_4_controlpanel/image%20137.png)
+
+Chọn đúng database cần thao tác
+
+![image.png](/Images/tuan_4_controlpanel/image%20138.png)
+
+Chọn Import nếu ta cần nhập databse
+
+![image.png](/Images/tuan_4_controlpanel/image%20139.png)
+
+Các định dạng cơ bản hỗ trợ gồm:
+
+- .sql
+- .sql.zip
+- .sql.gzip
+
+Kéo xuống dưới cùng → Import
+
+![image.png](/Images/tuan_4_controlpanel/image%20140.png)
+
+Hoàn tất import, thời gian thực thi sẽ dựa theo kích thước của file database
+
+![image.png](/Images/tuan_4_controlpanel/image%20141.png)
+
+Đối với Export, ta chọn database và qua tab Export, Chọn định dạng mong muốn => Export
+
+![image.png](/Images/tuan_4_controlpanel/image%20142.png)
+
+**Import/Export bằng giao diện FastPanel**
+
+Chọn vào nút 3 chấm của database cần thao tác => Upload SQL-dump
+
+![image.png](/Images/tuan_4_controlpanel/image%20143.png)
+
+Chọn file → Chờ → Hoàn tất import
+
+![image.png](/Images/tuan_4_controlpanel/image%20144.png)
+
+Đối với Export, ta sẽ chọn Create SQL dump via dump để tạo file trước nếu chưa có tùy chọn Download SQL dump
+
+![image.png](/Images/tuan_4_controlpanel/image%20145.png)
+
+Hoàn tất dump
+
+![image.png](/Images/tuan_4_controlpanel/image%20146.png)
+
+Sau đó chọn Download SQL dump để tải file .sql về máy
+
+![image.png](/Images/tuan_4_controlpanel/image%20147.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20148.png)
+
+**LƯU Ý**: 1 số bước không thể hoàn tác, cần hết sức cẩn thận khi thực hiện
+
+**Chỉnh sửa Database**
+
+Chọn Edit database nếu ta cần gán lại user sở hữu database và website
+
+![image.png](/Images/tuan_4_controlpanel/image%20149.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20150.png)
+
+Các thao tác liên quan đến user database, ta chọn User Management
+
+![image.png](/Images/tuan_4_controlpanel/image%20151.png)
+
+Có 3 thao tác cơ bản gồm:
+
+- **Edit:** Thay đổi mật khẩu hoặc cho phép user kết nối từ xa vào database
+    
+    ![image.png](/Images/tuan_4_controlpanel/image%20152.png)
+    
+    ![image.png](/Images/tuan_4_controlpanel/image%20153.png)
+    
+- **Unbind:** Gỡ liên kết user khỏi 1 database (vui lòng cẩn thận khi thao tác nếu không nắm rõ)
+    
+    ![image.png](/Images/tuan_4_controlpanel/image%20154.png)
+    
+    ![image.png](/Images/tuan_4_controlpanel/image%20155.png)
+    
+
+- Delete user: Xóa user
+    
+    ![image.png](/Images/tuan_4_controlpanel/image%20156.png)
+    
+    ![image.png](/Images/tuan_4_controlpanel/image%20157.png)
+    
+
+**Kết nối Database từ xa**
+
+Đầu tiên, cần đảm bảo user của database có quyền kết nối từ xa
+
+![image.png](/Images/tuan_4_controlpanel/image%20158.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20159.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20160.png)
+
+Tiếp theo, ta sẽ cần cho phép MySQL lắng nghe kết nối từ mọi nguồn (0.0.0.0). Truy cập Database servers
+
+![image.png](/Images/tuan_4_controlpanel/image%20161.png)
+
+Chọn Config Variables
+
+![image.png](/Images/tuan_4_controlpanel/image%20162.png)
+
+Nhập bind ở thanh tìm kiếm và Enter, ta sẽ thấy MySQL đang lắng nghe localhost (127.0.0.1). Cần chỉnh thành 0.0.0.0 để kết nối từ xa
+
+![image.png](/Images/tuan_4_controlpanel/image%20163.png)
+
+![image.png](/Images/tuan_4_controlpanel/image%20164.png)
+
+Chọn Save để lưu thông số
+
+![image.png](/Images/tuan_4_controlpanel/image%20165.png)
+
+Thông tin kết nối sẽ bao gồm:
+
+- User database:
+- Password:
+- Host: Địa chỉ IP của VPS
+
+![image.png](/Images/tuan_4_controlpanel/image%20166.png)
+
+Sau khi nhập đầu đủ, chính xác thông tin thì nhấn **Test Connection** và kết quả là thông báo kết nối thành công
+
+![image.png](/Images/tuan_4_controlpanel/image%20167.png)
+
+Nhấn ok và kết nối vào Database, ta có thể thấy Database như ở trên PHPMyAdmin
+
+![image.png](/Images/tuan_4_controlpanel/image%20168.png)
+
+---
+
+THE END
