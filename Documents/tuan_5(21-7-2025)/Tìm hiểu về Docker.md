@@ -248,7 +248,7 @@ docker-compose --version
 
 ### Thực hành sử dụng Docker Compose
 
-Ở phần [Chạy một dự án thức tế](https://www.notion.so/T-m-hi-u-v-Docker-233757a4e31f8098a9f3cace831abe29?pvs=21) , mình đã chạy độc lập 1 container chứa dữ liệu backend viết bằng Nodejs. 
+Ở phần **Chạy một dự án thức tế**, mình đã chạy độc lập 1 container chứa dữ liệu backend viết bằng Nodejs. 
 
 Tiếp theo ở phần này mình sẽ thực hành chạy song song 2 container chính bao gồm 1 container chứa dữ liệu backend viết bằng Nodejs và 1 container chứa dữ liệu frontend viết bằng ReactJS
 
