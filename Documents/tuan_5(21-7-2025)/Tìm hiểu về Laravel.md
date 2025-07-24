@@ -186,6 +186,7 @@ Mở trình duyệt bất kỳ, truy cập vào `http://127.0.0.1:8000` hoặc `
 ![image.png](/Images/tuan_5_laravel/image%2016.png)
 
 # Deploy ứng dụng lên Hosting
+### Đối với môi trường test (máy ảo)
 
 Để deploy 1 website lên hosting thì đầu tiên ta chuẩn bị cần cài đặt sẵn PHP, MySQL/MariaDB và sẵn cài đặt luôn 1 webserver bất kì ở trên hosting, ở đây mình sẽ chọn Apache Webserver
 
@@ -381,6 +382,127 @@ Sau khi cấu hình tất cả các bước trên xong thì trang web của bạ
 ![image.png](/Images/tuan_5_laravel/image%2020.png)
 
 Đến đây là ta đã hoàn thành các thao tác Deploy dự án lên Hosting rồi
+### Đối với môi trường thật (tương tác qua cPanel)
+
+**Bước 1: Thêm domain (subdomain)**
+
+Nhập từ khóa “**Domains**” trên thanh tìm kiếm → chọn **Domains**
+
+![image.png](/Images/tuan_5_laravel/image%2021.png)
+
+Nhấn **Create A New Domain**
+
+![image.png](/Images/tuan_5_laravel/image%2022.png)
+
+Nhập Domain cần tạo → chọn Thư mục lưu thông tin website **Document Root** → nhấn **Submit**
+
+![image.png](/Images/tuan_5_laravel/image%2023.png)
+
+Sau khi tạo xong, quay lại trang quản lý Domains → nhấn vào dòng Document Root vừa tạo
+
+![image.png](/Images/tuan_5_laravel/image%2024.png)
+
+Ta sẽ vào được File Manager của hosting này trên giao diện cPanel
+
+**Bước 2: Tạo Database và Database Users**
+
+Nhập trên thanh tìm kiếm **“Manage My Database” → chọn vào cái đầu tiên**
+
+![image.png](/Images/tuan_5_laravel/image%2025.png)
+
+Chúng ta đã vào được trang quản lý Database. Đầu tiên cần tạo Database để chứa dữ liệu của website
+Ở mục **Create New Database** → nhập tên **Database** → nhấn **Create Database**
+
+![image.png](/Images/tuan_5_laravel/image%2026.png)
+
+Kéo xuống dưới mục **Add New User →** nhập thông tin tài khoản để đăng nhập vào MySQL → nhấn **Create User**
+
+![image.png](/Images/tuan_5_laravel/image%2027.png)
+
+Cuối cùng là thêm User vừa tạo vào Database vừa tạo
+
+Kéo xuống mục **Add User To Database →** chọn **User** và **Database** cần thêm **User →** nhấn **Add**
+
+![image.png](/Images/tuan_5_laravel/image%2028.png)
+
+**Bước 3: Upload dữu liệu web lên hosting**
+
+Nhập vào thanh tìm kiếm **“File Manager”** → chọn cái đầu tiên
+
+![image.png](/Images/tuan_5_laravel/image%2029.png)
+
+Ta sẽ vào được trang quản lý thư mục và file của hosting, ở đây có 2 thư mục cần chú ý đó là **`public`** và **`yourdomain` .** Thì public_html là thư mục chứa dữ liệu trang web ứng với domain chính (main domain), còn thư mục có tên `yourdomain` là thư mục chứa dữ liệu trang web ứng ới subdomain bạn vừa thêm . 
+
+Tại ví dụ này, mình thực hành trên subdomain `thienduong.info` 
+
+![image.png](/Images/tuan_5_laravel/image%2030.png)
+
+**Chú ý:** khi nén file lại thì cần bỏ .git nếu bạn lưu source code trên github
+
+![image.png](/Images/tuan_5_laravel/image%2031.png)
+
+Mở thư mục để chứa dữ liệu website ra (thienduong.info) → nhấn **Upload →** tải lên ****file **.zip** chứa dữ liệu website vừa mới nén
+
+![image.png](/Images/tuan_5_laravel/image%2032.png)
+
+Kéo file vào ô hoặc nhấn Select File để chọn file .zip tải lên. Thời gian tải lên tương ứng với kích thước của file 
+
+![image.png](/Images/tuan_5_laravel/image%2033.png)
+
+![image.png](/Images/tuan_5_laravel/image%2034.png)
+
+Trở ra thư mục yourdomain chọn file **.zip** vừa upload lên → nhấn **Extract** → chọn thư mục yourdomain làm nơi giải nén → nhấn **Extract Files**
+
+![image.png](/Images/tuan_5_laravel/image%2035.png)
+
+Giải nén xong ta chuột phải → chọn **Delete** → tích vô ô xóa vĩnh viễn → Xác nhận xóa
+
+![image.png](/Images/tuan_5_laravel/image%2036.png)
+
+![image.png](/Images/tuan_5_laravel/image%2037.png)
+
+Cấu hình file .**env** → nhấp chuột phải file .**env** → chọn **Edit** → chỉnh sửa thông tin liên quan đến **Database** vừa tạo ở bước trên, thay đổi **APP_URL** bằng `http://yourdomain` hoặc `https://yourdomain` nếu có SSL rồi, **APP_DEBUG** thành **false →** xong thì nhấn **Save Changes** bên góc phải
+
+![image.png](/Images/tuan_5_laravel/image%2038.png)
+
+![image.png](/Images/tuan_5_laravel/image%2039.png)
+
+![image.png](/Images/tuan_5_laravel/image%2040.png)
+
+Kiểm tra trong thư mục public đã có file .htaccess chưa nếu chưa thì tạo mới và dán nội dung như sau:
+
+```
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+```
+
+**Bước 4: Kiểm tra**
+
+Truy cập vào trình duyệt và tìm kiếm `https://yourdomain` hoặc `http://yourdomain` nếu cấu hình đúng sẽ hiện ra giao diện website
+
+Trong ví dụ của tôi thi, kết quả khi truy cập vào https://thienduong.info  sẽ là:
+
+![image.png](/Images/tuan_5_laravel/image%2041.png)
 
 ---
 THE END
