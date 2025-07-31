@@ -9,6 +9,8 @@
   - [Cách thức hoạt động](#cách-thức-hoạt-động)
 - [Cài đặt và cấu hình Ansible](#cài-đặt-và-cấu-hình-ansible)
 - [Thực hành ứng dụng Ansible](#thực-hành-ứng-dụng-ansible)
+  - [Thực hành cài đặt LEMP Stack với Ansible](#thực-hành-cài-đặt-lemp-stack-với-ansible)
+  - [Thực hành cài đặt LAMP Stack với Ansible](#thực-hành-cài-đặt-lamp-stack-với-ansible)
 # Giới thiệu về Ansible
 
 ## Khái niệm
@@ -196,6 +198,8 @@ Ví dụ như:
 
 # Thực hành ứng dụng Ansible
 
+## Thực hành cài đặt LEMP Stack với Ansible
+
 Ở ví dụ này mình sẽ ứng dụng Ansible để cài đặt LEMP Stack cho 2 máy chủ Node đã đưa ra ở phần **Cài Đặt và cấu hình Ansible** bên trên.
 
 Trên máy Control, ta thực hiện các bước tuần tự
@@ -221,7 +225,6 @@ Trong đó:
 - **hosts** – Đó là một tệp kiểm kê chứa các mẩu thông tin về các máy chủ được quản lý bởi ansible. Nó cho phép bạn tạo một nhóm máy chủ giúp bạn dễ dàng quản lý và mở rộng quy mô tệp kiểm kê hơn. Tệp kiểm kê có thể được tạo bằng nhiều định dạng khác nhau, bao gồm định dạng INI và YAML.
 - **site.yml**  – Tệp sổ tay chính chứa nhóm máy chủ nào sẽ được quản lý bằng các vai trò có sẵn của chúng tôi.
 - **roles**  – đó là một nhóm sách hướng dẫn Ansible sẽ được sử dụng để cung cấp máy chủ. Các vai trò ansible có cấu trúc thư mục riêng, mỗi vai trò sẽ chứa các thư mục như task, handler, vars, v.v.
-- 
 
 **Bước 2 – Tạo role ansible cho cấu trúc thư mục**
 
@@ -674,9 +677,9 @@ nano vars/main.yml
 Dán các biến này cho cơ sở dữ liệu MySQL và cấu hình người dùng bên dưới.
 
 ```
-db_name:  thien_db
-db_user: thienduong
-db_pass: thienplpp124
+db_name:  db_name
+db_user: userpass
+db_pass: dbpass
 ```
 
 Lưu và đóng.
@@ -714,6 +717,325 @@ Truy cập vào `http://your_ip` nếu kết quả giống bên dưới ảnh n�
 Tiếp là kiểm tra đăng nhập không mật khẩu và có mật khẩu ở mysql. Nếu như đúng thì sẽ không thể đăng nhập vào mysql mà không nhập mật khẩu, chỉ cho phép đăng nhập với đầy đủ username và password
 
 ![image.png](/Images/tuan_6_ansible/image%2015.png)
+
+## Thực hành cài đặt LAMP Stack với Ansible
+
+**Bước 1: Tạo thư mục dự án trên máy Control**
+
+```
+mkdir ansible_playbook && cd $_
+```
+
+**Bước 2: Tạo biến mặc định** 
+
+Tạo tệp biến mặc định sẽ chứa thông tin như tên miền, mật khẩu gốc MariaDB, v.v.
+
+Trong thư mục làm việc của chúng ta, hãy tạo một thư mục con có tên vars và thêm tệp cấu hình biến.
+
+```
+mkdir vars && cd vars
+nano default.yml
+```
+
+Trong tệp **default.yml**, thêm thông tin bên dưới, thay thế các biến bằng thông tin chi tiết của bạn:
+
+```
+---
+mysql_root_password: "P@ssw0rd"
+app_user: "apache"
+http_host: "lamp.example.com"
+http_conf: "lamp.example.com.conf"
+http_port: "80"
+disable_default: true
+```
+
+Tạo file **hosts** trong `/ansible_playbook` , thêm thông tin các mấy Node và gom chúng thành 1 nhóm sau đó đặt tên như hình dưới, bạn có thể thay thế thông tin phù hợp:
+
+```
+[lampstack]
+server1 ansible_ssh_host=192.168.0.104 ansible_user=thienduong
+server2 ansible_ssh_host=192.168.0.118 ansible_user=thienduong
+```
+
+**Bước 3: Tạo Apache role**
+
+Tạo thư mục **roles** từ thư mục `/ansible_playbook` và một thư mục con khác trong **roles** cho **Apache**.
+
+```
+mkdir -p roles/apache
+```
+
+Ở đây, chúng ta cần tạo role cho Apache và PHP, role này sẽ chứa tất cả các bước, mô-đun và mẫu cần thiết cho dịch vụ Apache.
+
+**Bước 4: Tạo Apache & PHP tasks**
+
+Tạo tác vụ thực thi chính cho Apache và PHP, bên trong thư mục Apache
+
+```
+mkdir tasks && cd tasks
+nano main.yml
+```
+
+Thêm nội dung bên dưới vào tệp **main.yml**:
+
+```
+---
+- name: Install prerequisites
+  apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+  loop: [ 'aptitude' ]
+
+  #Apache Configuration
+- name: Install Apache and PHP Packages
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: [ 'apache2', 'php', 'php-mysql', 'libapache2-mod-php' ]
+
+- name: Create document root
+  file:
+    path: "/var/www/{{ http_host }}"
+    state: directory
+    owner: www-data
+    mode: '0755'
+
+- name: Set up Apache virtualhost
+  template:
+    src: "files/apache.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ http_conf }}"
+    
+- name: Enable new site
+  shell: /usr/sbin/a2ensite {{ http_conf }}
+  
+- name: Disable default Apache site
+  shell: /usr/sbin/a2dissite 000-default.conf
+  when: disable_default
+  notify: Reload Apache
+# UFW Configuration
+- name: "UFW - Allow HTTP on port {{ http_port }}"
+  ufw:
+    rule: allow
+    port: "{{ http_port }}"
+    proto: tcp
+
+  # PHP Info Page
+- name: Sets Up PHP Info Page
+  template:
+    src: "files/info.php.j2"
+    dest: "/var/www/{{ http_host }}/info.php"
+
+- name: Reload Apache
+  service:
+    name: apache2
+    state: reloaded
+
+- name: Restart Apache
+  service:
+    name: apache2
+    state: restarted
+```
+
+**Bước 5: Tạo Apache handler**
+
+Thêm Trình xử lý cho Apache. Điều này nên được thực hiện trong thư mục roles/apache/:
+
+```
+mkdir handlers && cd handlers
+nano main.yml
+```
+
+Thêm nội dung sau cho Apache handler
+
+```sql
+---
+- name: Reload Apache
+  service:
+    name: apache2
+    state: reloaded
+
+- name: Restart Apache
+  service:
+    name: apache2
+    state: restarted
+```
+
+**Bước 6: Thêm Template cho Virtualhost và trang index.php** 
+
+Tạo các tệp sẽ được sử dụng để tạo Virtualhost và tệp chỉ mục info.php. Điều này cũng được thực hiện trong thư mục  roles/apache/:
+
+```
+mkdir files && cd files
+```
+
+Tạo file Virtualhost
+
+```
+nano apache.conf.j2
+```
+
+Dán nội dung dưới vào file **apache.conf.j2**
+
+```
+<VirtualHost *:{{ http_port }}>
+    ServerAdmin webmaster@localhost
+    ServerName {{ http_host }}
+    ServerAlias www.{{ http_host }}
+    DocumentRoot /var/www/{{ http_host }}
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/{{ http_host }}>
+          Options -Indexes
+    </Directory>
+
+    <IfModule mod_dir.c>
+        DirectoryIndex index.php index.html index.cgi index.pl  index.xhtml index.htm
+    </IfModule>
+
+</VirtualHost>
+```
+
+Tạo file demo PHP chứa thông tin bản PHP đã cài đặt:
+
+```
+nano info.php.j2
+```
+
+Dán nội dung dưới vào file **info.php.j2**
+
+```powershell
+<?php
+phpinfo();
+```
+
+Sau khi  thực hiện tới đây, kiểm tra lại đảm bảo cây thư mục trông như thế này:
+
+```
+../apache$ tree .
+```
+
+![image.png](/Images/tuan_6_ansible/image%2016.png)
+
+**Bước 7: Tạo MariaDB role**
+
+Trong thư mục **roles** tạo thư mục MariaDB và tạo thư  mục con **tasks** để chứa các tác vụ liên quan đến ****MariaDB
+
+```
+mkdir -p mariadb/tasks && cd mariadb/tasks
+```
+
+Tạo file cấu hình cho **MariaDB tasks**:
+
+```
+nanp main.yml
+```
+
+Dán nội dung dưới vào file main.yml, có thể thay đổi để phù hợp với như cầu của bạn:
+
+```
+---
+- name: Install prerequisites
+  apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+  loop: [ 'aptitude' ]
+
+ #Install MariaDB server
+- name: Install MariaDB Packages
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: [ 'mariadb-server', 'python3-pymysql' ]
+
+# Start MariaDB Service
+- name: Start MariaDB service
+  service:
+    name: mariadb
+    state: started
+  become: true
+
+ # MariaDB Configuration
+- name: Sets the root password
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Removes all anonymous user accounts
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Removes the MySQL test database
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+```
+
+Sau khi thực hiện đến bước này thì đảm bảo rằng cấu trúc trong **/ansible_playbook/roles trông như thế này:**
+
+![image.png](/Images/tuan_6_ansible/image%2017.png)
+
+**Bước 8: Tạo Playbook cho Ansible**
+
+Trong thư mục `/ansible_playbook` tạo file **lampstack.yml** để sử dụng các **roles** vừa khởi tạo ỏ những bước trên.
+
+```
+nano lampstack.yml
+```
+
+Dán nội dụng bên dưới vào:
+
+```
+---
+- name: configure lamp
+  hosts: lampstack
+  become: yes
+  become_method: sudo
+  vars_files:
+    - vars/default.yml
+  roles:
+    - apache
+    - mariadb
+```
+
+Toàn bộ cây cấu hình từ thư mục làm việc sẽ trông như thế này:
+
+![image.png](/Images/tuan_6_ansible/image%2018.png)
+
+**Bước 9: Chạy Ansible Playbook để cài LAMP Stack** 
+
+Chạy lệnh sau để cài đặt LAMP Stack dựa vào Playbook đã cấu hình ở bước trên 
+
+```
+ansible-playbook -i hosts lampstack.yml --ask-become-pass
+```
+
+Sau khi chạy lệnh trên thì bạn sẽ được hỏi mật khẩu, sau khi nhập mật khẩu sẽ tiến hành chạy các task đã cấu hình sẵn:
+
+![image.png](/Images/tuan_6_ansible/image%2019.png)
+
+![image.png](bff70608-e2bb-4e4f-a36f-c39f8df742c0.png)
+
+**Bước 10: Kiểm tra trên các máy node**
+
+Sau khi tiến hành cài đặt các dịch vụ thông qua Ansible thì chúng ta cần kiểm tra lại trên các máy được cài đặt đã hoạt động đúng hay chưa.
+
+Vào một trình duyệt bất kỳ, truy cập `http://your_node_ip/info.php` nêu như cài đặt đúng thì sẽ hiển thị trang thông tin PHP như sau:
+
+![image.png](/Images/tuan_6_ansible/image%2020.png)
+
+Để kiêm tra xem MySQL/MariaDB đã cài đặt đúng chưa thì hãy thử đang nhập với 2 lệnh 
+
+```
+sudo mysql
+```
+
+và 
+
+```
+sudo mysql -u root -p
+```
+
+![image.png](/Images/tuan_6_ansible/image%2021.png)
 
 ---
 THE END
