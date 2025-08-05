@@ -1037,5 +1037,437 @@ sudo mysql -u root -p
 
 ![image.png](/Images/tuan_6_ansible/image%2021.png)
 
+
+## Thực hành cài đặt WordPress với Ansible
+
+**Bước 1: Tạo thư mục dự án trên máy control**
+
+```
+mkdir wordpress_playbook
+cd wordpress_playbook
+```
+
+**Bước 2: Tạo file host**
+
+```
+nano hosts
+```
+
+và khai báo server cũng như tên nhóm, sau đây là ví dụ (có thể tùy chỉnh phù hợp):
+
+```
+[webserver]
+server1 ansible_host=192.168.0.118
+
+[all:vars]
+ansible_user=thienduong
+ansible_ssh_private_key_file=/root/.ssh/ansible_no_passphrase
+```
+
+**Bước 3: Tạo file playbook.yml**
+
+```
+nano playbook.yml
+```
+
+Trong file này ta sẽ khai báo tên, host, file biến và roles của Play, sau đây là ví dụ (có thể tùy chỉnh cho phù hợp)
+
+```
+- name: Install WordPress For Web Server
+  hosts: webserver
+  become: true
+  vars_files:
+    - vars/default.yml
+  roles:
+    - setup_lamp
+    - setup_wordpress
+```
+
+**Bước 4: Tạo file /vars/default.yml chứa các biến có thể sử dụng lại**
+
+Để tạo file default.yml chạy những lệnh sau
+
+```
+mkdir vars
+nano /vars/default.yml
+```
+
+Sau đó dán những thông tin sau vào file (có thể chỉnh sửa cho phù hợp)
+
+```
+ ---
+#System Settings
+php_modules: [ 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip' ]
+
+#MySQL Settings
+mysql_root_password: "p@ssWordd"
+mysql_db: "wordpress"
+mysql_user: "userwp"
+mysql_password: "pwWPress"
+
+#HTTP Settings
+http_host: "wordpress.thienduong.name.vn"
+http_conf: "wordpress.thienduong.name.vn.conf"
+http_port: "80"
+backend_servers:
+  - name: server1
+    address: 192.168.0.118
+    port: 80
+load_balancing_method: round-robin
+nginx_host: "wordpress.thienduong.name.vn"
+load_balancer_port: 80
+```
+
+**Bước 5: Tạo roles setup cài đặt LAMP**
+
+Đứng trong thu mục `/wordpress_playbook` , tạo thư mục roles và tạo thư mục `/roles/setup_lamp` 
+
+```
+mkdir roles
+mkdir /roles/setup_lamp
+cd /roles/setup_lamp
+```
+
+Sau đó tạo thư mục `tasks` và `handlers` trong `/roles/setup_lamp` , sau đó tạo file `/tasks/main.yml` và dán nội dung sau (có thể thay đổi để phù hợp)
+
+```
+---
+# tasks file for setup_lamp
+- name: Install prerequisites
+  apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
+  tags: [ system ]
+
+- name: Install LAMP Packages
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: [ 'apache2', 'mysql-server', 'python3-pymysql', 'php', 'php-mysql', 'libapache2-mod-php' ]
+  tags: [ system ]
+
+- name: Ensure MySQL is started
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+  tags: [ mysql ]
+
+- name: Install PHP Extensions
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: "{{ php_modules }}"
+  tags: [ system ]
+
+- name: Set the root password
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  tags: [ mysql, mysql-root ]
+
+- name: Remove all anonymous user accounts
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  tags: [ mysql ]
+
+- name: Remove the MySQL test database
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  tags: [ mysql ]
+```
+
+**Bước 6: Tạo roles setup cài đặt WordPress**
+
+Trong thư mục `roles` tạo thư mục `/roles/setup_wordpress` 
+
+```
+cd roles && mkdir setup_wordpress
+cd setup_wordpress
+```
+
+Sau đó tạo thư mục  `tasks`, `handlers` và `templates` trong `/roles/setup_wordpress`
+
+```
+mkdir tasks handlers templates
+```
+
+Tạo file /tasks/main.yml và dán lần lượt nội dung của các tasks vào.
+
+Đây là cấu hình Apache:
+
+```
+---
+# tasks file for setup_wordpress
+# Apache Config vhost
+- name: Create document root
+  file:
+   path: "/var/www/{{ http_host }}"
+   state: directory
+   owner: "www-data"
+   group: "www-data"
+   mode: '0755'
+  tags: [ apache ]
+
+- name: Set up Apache VirtualHost
+  template:
+   src: "apache.conf.j2"
+   dest: "/etc/apache2/sites-available/{{ http_conf }}"
+  notify: Reload Apache
+  tags: [ apache ]
+
+- name: Enable rewrite module
+  shell: /usr/sbin/a2enmod rewrite
+  notify: Reload Apache
+  tags: [ apache ]
+
+- name: Enable new site
+  shell: /usr/sbin/a2ensite {{ http_conf }}
+  notify: Reload Apache
+  tags: [ apache ]
+
+- name: Disable default Apache site
+  shell: /usr/sbin/a2dissite 000-default.conf
+  notify: Restart Apache
+  tags: [ apache ]
+```
+
+Đây là cấu hình Setup Database for WordPress:
+
+```
+# Setup Database for WordPress
+- name: Creates database for WordPress
+  mysql_db:
+   name: "{{mysql_user}}"
+   state: present
+   login_user: root
+   login_password: "{{ mysql_root_password }}"
+  tags: [ mysql ]
+
+- name: Create MySQL user for WordPress
+  mysql_user:
+   name: "{{ mysql_user }}"
+   password: "{{ mysql_password }}"
+   priv: "{{ mysql_user }}.*:ALL"
+   state: present
+   login_user: root
+   login_password: "{{ mysql_root_password }}"
+  tags: [ mysql ]
+```
+
+Đây là cấu hình WordPress:
+
+```
+# WordPress Configuration
+- name: Download and unpack latest WordPress
+  unarchive:
+   src: https://wordpress.org/latest.tar.gz
+   dest: "/var/www/{{ http_host }}"
+   remote_src: yes
+   creates: "/var/www/{{ http_host }}/wordpress"
+  tags: [ wordpress ]
+- name: Set ownership
+  file:
+   path: "/var/www/{{ http_host }}"
+   state: directory
+   recurse: yes
+   owner: www-data
+   group: www-data
+  tags: [ wordpress ]
+- name: Set permissions for directories
+  shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
+  tags: [ wordpress ]
+- name: Set permissions for files
+  shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type f -exec chmod 640 {} \\;"
+  tags: [ wordpress ]
+- name: Set up wp-config
+  template:
+   src: "wp-config.php.j2"
+   dest: "/var/www/{{ http_host }}/wordpress/wp-config.php"
+  tags: [ wordpress ]
+```
+
+Tới đây ta đã cấu hình xong `tasks` cho `/roles/setup_wordpress` . Tiếp tực tới phần `handlers` 
+
+Tạo file `/handlers/main.yml` và dán nội dung sau vào (có thể tùy chỉnh cho phù hợp):
+
+```
+---
+# handlers file for setup_wordpress
+
+- name: Reload Apache
+  ansible.builtin.service:
+    name: apache2
+    state: reloaded
+
+- name: Restart Apache
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
+
+```
+
+Tiếp đến ta tạo 2 file `wp-config.php.j2` và `apache.conf.j2` trong thư mục `/setup_wordpress/templates` với nội dung như sau (có thể thay đổi để phù hợp)
+
+Đây là mẫu file `wp-config.php.j2`:
+
+```
+<?php
+/**
+ * The base configuration for WordPress
+ *
+ * The wp-config.php creation script uses this file during the
+ * installation. You don't have to use the web site, you can
+ * copy this file to "wp-config.php" and fill in the values.
+ *
+ * This file contains the following configurations:
+ *
+ * * MySQL settings
+ * * Secret keys
+ * * Database table prefix
+ * * ABSPATH
+ *
+ * @link https://codex.wordpress.org/Editing_wp-config.php
+ *
+ * @package WordPress
+ */
+
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define( 'DB_NAME', '{{mysql_user}}' );
+
+/** MySQL database username */
+define( 'DB_USER', '{{ mysql_user }}' );
+
+/** MySQL database password */
+define( 'DB_PASSWORD', '{{ mysql_password }}' );
+
+/** MySQL hostname */
+define( 'DB_HOST', 'localhost' );
+
+/** Database Charset to use in creating database tables. */
+define( 'DB_CHARSET', 'utf8' );
+
+/** The Database Collate type. Don't change this if in doubt. */
+define( 'DB_COLLATE', '' );
+
+/** Filesystem access **/
+define('FS_METHOD', 'direct');
+
+/**#@+
+ * Authentication Unique Keys and Salts.
+ *
+ * Change these to different unique phrases!
+ * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
+ * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
+ *
+ * @since 2.6.0
+ */
+define( 'AUTH_KEY',         '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'SECURE_AUTH_KEY',  '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'LOGGED_IN_KEY',    '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'NONCE_KEY',        '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'AUTH_SALT',        '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'SECURE_AUTH_SALT', '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'LOGGED_IN_SALT',   '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+define( 'NONCE_SALT',       '{{ lookup('password', '/dev/null chars=ascii_letters length=64') }}' );
+
+/**#@-*/
+
+/**
+ * WordPress Database Table prefix.
+ *
+ * You can have multiple installations in one database if you give each
+ * a unique prefix. Only numbers, letters, and underscores please!
+ */
+$table_prefix = 'wp_';
+
+/**
+ * For developers: WordPress debugging mode.
+ *
+ * Change this to true to enable the display of notices during development.
+ * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * in their development environments.
+ *
+ * For information on other constants that can be used for debugging,
+ * visit the Codex.
+ *
+ * @link https://codex.wordpress.org/Debugging_in_WordPress
+ */
+define( 'WP_DEBUG', false );
+
+/* That's all, stop editing! Happy publishing. */
+
+/** Absolute path to the WordPress directory. */
+if ( ! defined( 'ABSPATH' ) ) {
+        define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+}
+
+/** Sets up WordPress vars and included files. */
+require_once( ABSPATH . 'wp-settings.php' );
+```
+
+Đây là mẫu file `apache.conf.j2` :
+
+```
+<VirtualHost *:{{ http_port }}>
+    ServerAdmin webmaster@localhost
+    ServerName {{ http_host }}
+    ServerAlias www.{{ http_host }}
+    DocumentRoot /var/www/{{ http_host }}/wordpress
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/{{ http_host }}>
+          Options -Indexes
+          AllowOverride All
+    </Directory>
+
+    <IfModule mod_dir.c>
+        DirectoryIndex index.php index.html index.cgi index.pl  index.xhtml index.htm
+    </IfModule>
+
+</VirtualHost>
+```
+
+Lưu ý cấu hình trên chỉ ở mức tham khảo, đối với mẫu `apache.conf.j2` chỉ mới cấu hình cho `port 80` chưa có bảo mật bằng chứng chỉ SSL
+
+Thư mục roles sau khi cấu hình xong sẽ có dạng:
+
+![image.png](/Images/tuan_6_ansible/image%2022.png)
+
+**Bước 7: Chạy playbook cài đặt** 
+
+Đảm bảo bạn đang đứng trong thư mục chính `/wordpress_playbook`
+
+```
+cd /wordpress_playbook
+```
+
+Để chạy tất cả play đã định nghĩa trong file playbook thì dùng lệnh:
+
+```
+ansible-playbook -i hosts playbook.yml --limit webserver --ask-become-pass
+```
+
+Để chạy 1 play duy nhất thì có thể dùng lệnh sau:
+
+```
+ansible-playbook -i hosts playbook.yml --ask-become-pass
+```
+
+![image.png](/Images/tuan_6_ansible/image%2023.png)
+
+![image.png](/Images/tuan_6_ansible/image%2024.png)
+
+**Bước 8: Kiểm tra WordPress sau cài đặt**
+
+Sau khi cài dặt thành công thông qua Ansible, ta kiểm tra bằng cách mở trình duyệt bất kỳ và truy cập vào [`http://your_domain_or_ip`](http://your_domain_or_ip) bởi vì ta cấu hình port 80 mặc định trỏ vào thu mục WordPress nêu nếu thành công thi sẽ hiện như sau:
+
+![image.png](/Images/tuan_6_ansible/image%2025.png)
+Vậy là chúng ta đã Cài đặt thành công WordPress thông qua quá Ansible rồi
+
 ---
 THE END
